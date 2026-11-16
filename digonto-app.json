@@ -1,0 +1,42 @@
+{
+  "slug": "digonto-player",
+  "name": "Digonto Player",
+  "version": "1.0.6",
+  "comment": "Play video and music: play lists, shuffle, repeat, speed, subtitles, full screen",
+  "entry": "digonto_player.py",
+  "files": [
+    "digonto_player.py",
+    "digonto_ui.py",
+    "assets",
+    "requirements.txt",
+    "README.txt"
+  ],
+  "requirements": "requirements.txt",
+  "check": "import PySide6.QtWidgets, PySide6.QtMultimedia, PySide6.QtMultimediaWidgets",
+  "needs_tk": false,
+  "apt": [
+    "libxcb-cursor0",
+    "libpulse0",
+    "libpulse-mainloop-glib0"
+  ],
+  "macos_min": 13,
+  "categories": "AudioVideo;Player;Audio;Video;",
+  "keywords": "video;music;player;mp4;mp3;movie;audio;",
+  "wm_class": "digonto-player",
+  "mime": [
+    "video/mp4", "video/x-matroska", "video/webm", "video/quicktime", "video/x-msvideo", "video/mpeg",
+    "audio/mpeg", "audio/flac", "audio/x-wav", "audio/ogg", "audio/mp4", "audio/x-vorbis+ogg", "audio/aac"
+  ],
+  "legacy": {
+    "linux": [],
+    "darwin": [],
+    "windows": []
+  },
+  "extensions": [
+    ".mp4", ".m4v", ".mkv", ".webm", ".avi", ".mov", ".mp3", ".flac", ".wav", ".ogg", ".opus", ".m4a", ".aac"
+  ],
+  "uti": [
+    "public.movie",
+    "public.audio"
+  ]
+}
