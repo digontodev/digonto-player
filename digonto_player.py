@@ -323,7 +323,10 @@ class Main(QMainWindow):
 
         # ---- the stage: video, or a music page
         self.stage = QStackedWidget()
-        self.start_page = self._start_page()
+        self.start_page = ui.StartScreen(
+            "Play video and music - all common formats, folders and play lists",
+            [("Open files …", "open", self.open_files, True), ("Open folder …", "folder", self.open_folder, False)],
+            "or drop video or music here", lambda: ui.recent_paths(SLUG), self.open_path)
         self.music_page = self._music_page()
         self.stage.addWidget(self.start_page)
         self.stage.addWidget(self.video)
@@ -421,6 +424,16 @@ class Main(QMainWindow):
         bl = QHBoxLayout(body)
         bl.setContentsMargins(0, 0, 0, 0)
         bl.setSpacing(0)
+        self.rail = ui.Rail(
+            [("open", "open", "Open files (Ctrl+O)", self.open_files),
+             ("folder", "folder", "Open a folder", self.open_folder),
+             ("url", "export", "Open a web address (stream)", self.open_url),
+             ("snapshot", "img2pdf", "Save a picture of the video", self.snapshot),
+             None,
+             ("playlist", "playlist", "Show or hide the play list (L)", self.toggle_list),
+             ("full", "crop", "Full screen (F)", self.toggle_full)],
+            [("settings", "settings", "Settings and help", self.rail_settings)])
+        bl.addWidget(self.rail)
         left = QVBoxLayout()
         left.setSpacing(0)
         left.addWidget(self.stage, 1)
@@ -520,7 +533,10 @@ class Main(QMainWindow):
         self.cover.setPixmap(pm)
 
     def _stage(self, *_):
+        if hasattr(self, "rail"):
+            self.rail.set_enabled(["snapshot"], bool(self.items) and self.player.hasVideo())
         if not self.items:
+            self.start_page.refresh()
             self.stage.setCurrentWidget(self.start_page)
         elif self.player.hasVideo():
             self.stage.setCurrentWidget(self.video)
@@ -620,6 +636,13 @@ class Main(QMainWindow):
         if ps:
             self.st.setValue("last_dir", os.path.dirname(ps[0]))
             self.open_paths(ps)
+
+    def rail_settings(self):
+        m = QMenu(self)
+        m.addAction("Keyboard shortcuts", lambda: ui.show_all_shortcuts(self, APP_NAME))
+        m.addAction(f"About {APP_NAME}", self.about)
+        b = self.rail.button("settings")
+        m.exec(b.mapToGlobal(b.rect().topRight()))
 
     def open_folder(self):
         d = QFileDialog.getExistingDirectory(self, "Open a folder with video or music", str(self.st.value("last_dir", "")))
@@ -995,6 +1018,7 @@ class Main(QMainWindow):
         self.header.hide()
         self.statusBar().hide()
         self.side.hide()
+        self.rail.hide()
         self.showFullScreen()
         self._sync_icons()
         self.hide_timer.start()
@@ -1008,6 +1032,7 @@ class Main(QMainWindow):
         self.header.setVisible(str(QSettings("Digonto", "ui").value("header_hidden", "false")).lower() != "true")
         self.statusBar().show()
         self.bar.show()
+        self.rail.show()
         self.side.setVisible(self._side_was)
         self.unsetCursor()
         self.video.unsetCursor()
@@ -1064,8 +1089,14 @@ class Main(QMainWindow):
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls():
             e.acceptProposedAction()
+            if self.stage.currentWidget() is self.start_page:
+                self.start_page.set_dropping(True)
+
+    def dragLeaveEvent(self, e):
+        self.start_page.set_dropping(False)
 
     def dropEvent(self, e):
+        self.start_page.set_dropping(False)
         ps = [u.toLocalFile() for u in e.mimeData().urls() if u.isLocalFile()]
         if ps:
             self.open_paths(ps)
