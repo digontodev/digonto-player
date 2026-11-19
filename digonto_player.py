@@ -20,7 +20,7 @@ import digonto_ui as ui
 
 APP_NAME = "Digonto Player"
 SLUG = "digonto-player"
-VERSION = "1.0.6"
+VERSION = "1.0.7"
 VIDEO = (".mp4", ".m4v", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".mpg", ".mpeg", ".ts", ".m2ts", ".3gp", ".ogv", ".vob")
 AUDIO = (".mp3", ".flac", ".wav", ".ogg", ".oga", ".opus", ".m4a", ".aac", ".aiff", ".aif", ".wma", ".ape", ".mka", ".weba")
 LISTS = (".m3u", ".m3u8")

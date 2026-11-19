@@ -1,7 +1,7 @@
 {
   "slug": "digonto-player",
   "name": "Digonto Player",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "comment": "Play video and music: play lists, shuffle, repeat, speed, subtitles, full screen",
   "entry": "digonto_player.py",
   "files": [
